@@ -1,39 +1,54 @@
+import java.util.Stack;
+
 class MinStack {
 
-     Stack<int[]> st = new Stack<>();
+    Stack<Long> st = new Stack<>();
+    long mini;
 
     public MinStack() {
-        
     }
-    
+
     public void push(int value) {
-        if(st.empty()){
-            st.push(new int[]{value,value});
-        }
-        else{
-            st.push(new int[]{value,Math.min(value,st.peek()[1])});
+
+        if (st.empty()) {
+            st.push((long) value);
+            mini = value;
+        } 
+        else if (value >= mini) {
+            st.push((long) value);
+        } 
+        else {
+            // Store modified value
+            st.push(2L * value - mini);
+            mini = value;
         }
     }
-    
+
     public void pop() {
-        st.pop();
+
+        if (st.empty()) return;
+
+        long top = st.pop();
+
+        // If top is modified, restore previous minimum
+        if (top < mini) {
+            mini = 2 * mini - top;
+        }
     }
-    
+
     public int top() {
-        return st.peek()[0];
+
+        long top = st.peek();
+
+        if (top >= mini) {
+            return (int) top;
+        }
+
+        // Modified value means actual top is mini
+        return (int) mini;
     }
-    
+
     public int getMin() {
-        return st.peek()[1];
-        
+        return (int) mini;
     }
 }
-
-/**
- * Your MinStack object will be instantiated and called as such:
- * MinStack obj = new MinStack();
- * obj.push(value);
- * obj.pop();
- * int param_3 = obj.top();
- * int param_4 = obj.getMin();
- */
